@@ -30,9 +30,14 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
         flexDirection: 'column',
         gap: 1,
         cursor: 'pointer',
+        width: '100%',
+        maxWidth: '100%',
         '&:hover': {
           transform: 'scale(1.02)',
           transition: 'transform 0.2s',
+        },
+        '@media (max-width: 600px)': {
+          gap: 0.5,
         },
       }}
     >
@@ -47,25 +52,28 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
             width: '100%',
             height: '100%',
             objectFit: 'cover',
-            borderRadius: '8px',
+            borderRadius: '12px',
           }}
         />
         <Box
           sx={{
             position: 'absolute',
-            bottom: 4,
-            right: 4,
+            bottom: 8,
+            right: 8,
             backgroundColor: 'rgba(0, 0, 0, 0.8)',
             color: 'white',
             padding: '2px 4px',
             borderRadius: '4px',
             fontSize: '12px',
+            fontWeight: 500,
+            backdropFilter: 'blur(4px)',
           }}
         >
           {video.duration}
         </Box>
       </Box>
-      <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
+      
+      <Box sx={{ display: 'flex', gap: 1, padding: '8px 0' }}>
         <img
           src={video.channelAvatar}
           alt={video.channel}
@@ -74,33 +82,52 @@ const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
             height: '36px',
             borderRadius: '50%',
             objectFit: 'cover',
+            flexShrink: 0,
           }}
         />
-        <Box sx={{ flex: 1 }}>
+        <Box sx={{ flex: 1, minWidth: 0 }}>
           <Typography
             variant="subtitle1"
             sx={{
               color: 'white',
-              fontWeight: 'bold',
+              fontWeight: 500,
               display: '-webkit-box',
               WebkitLineClamp: 2,
               WebkitBoxOrient: 'vertical',
               overflow: 'hidden',
               fontSize: '0.95rem',
               lineHeight: '1.3',
+              marginBottom: '4px',
+              '@media (max-width: 600px)': {
+                fontSize: '0.9rem',
+                lineHeight: '1.2',
+              },
             }}
           >
             {video.title}
           </Typography>
           <Typography
             variant="body2"
-            sx={{ color: '#aaa', fontSize: '0.85rem' }}
+            sx={{ 
+              color: '#aaa', 
+              fontSize: '0.85rem',
+              marginBottom: '2px',
+              '@media (max-width: 600px)': {
+                fontSize: '0.8rem',
+              },
+            }}
           >
             {video.channel}
           </Typography>
           <Typography
             variant="caption"
-            sx={{ color: '#aaa', fontSize: '0.85rem' }}
+            sx={{ 
+              color: '#aaa', 
+              fontSize: '0.85rem',
+              '@media (max-width: 600px)': {
+                fontSize: '0.8rem',
+              },
+            }}
           >
             {video.views} • {video.timestamp}
           </Typography>

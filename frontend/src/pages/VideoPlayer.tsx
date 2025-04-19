@@ -248,60 +248,83 @@ const VideoPlayer: React.FC = () => {
   }
 
   return (
-    <Box sx={{ p: 2, display: 'flex', flexDirection: { xs: 'column', md: 'row' } }}>
-      <Box sx={{ flex: '1 1 70%', pr: { md: 2 } }}>
-        <Box 
-          sx={{ 
-            position: 'relative', 
-            width: '100%', 
-            paddingTop: '56.25%', 
-            mb: 2,
-            backgroundColor: '#000',
-            borderRadius: '12px',
-            overflow: 'hidden',
-          }}
-        >
-          <iframe
-            src={`https://www.youtube.com/embed/${video.videoId}?autoplay=0&rel=0`}
-            title={video.title}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
+    <Box sx={{ 
+      display: 'flex', 
+      flexDirection: { xs: 'column', md: 'row' }, 
+      gap: 3,
+      p: { xs: 1, sm: 2 },
+      '@media (max-width: 600px)': {
+        gap: 2,
+        p: 1,
+      }
+    }}>
+      <Box sx={{ flex: '1 1 70%' }}>
+        <Box sx={{ 
+          position: 'relative', 
+          width: '100%', 
+          paddingTop: '56.25%',
+          borderRadius: '12px',
+          overflow: 'hidden',
+          backgroundColor: '#0f0f0f',
+          '@media (max-width: 600px)': {
+            borderRadius: '8px',
+          }
+        }}>
+          <video
+            src={video.videoUrl}
+            controls
             style={{
               position: 'absolute',
               top: 0,
               left: 0,
               width: '100%',
               height: '100%',
-              border: 0,
+              objectFit: 'cover',
             }}
           />
         </Box>
 
-        <Typography variant="h5" sx={{ color: 'white', fontWeight: 'bold', mb: 1 }}>
-          {video.title}
-        </Typography>
-
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' },
+          justifyContent: 'space-between', 
+          alignItems: { xs: 'flex-start', sm: 'center' }, 
+          mb: 2,
+          mt: 2,
+          gap: 1
+        }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Avatar
-              sx={{ width: 48, height: 48, mr: 2 }}
+              sx={{ 
+                width: { xs: 40, sm: 48 }, 
+                height: { xs: 40, sm: 48 },
+                mr: { xs: 1, sm: 2 }
+              }}
               alt={video.channel}
               src={video.channelAvatar}
             />
             <Box>
-              <Typography variant="subtitle1" sx={{ color: 'white', fontWeight: 'bold' }}>
+              <Typography variant="subtitle1" sx={{ 
+                color: 'white', 
+                fontWeight: 'bold',
+                fontSize: { xs: '0.9rem', sm: '1rem' }
+              }}>
                 {video.channel}
               </Typography>
-              <Typography variant="body2" sx={{ color: '#aaa' }}>
+              <Typography variant="body2" sx={{ 
+                color: '#aaa',
+                fontSize: { xs: '0.8rem', sm: '0.875rem' }
+              }}>
                 {video.subscribers}
               </Typography>
             </Box>
             <Button
               variant="contained"
               sx={{
-                ml: 2,
+                ml: { xs: 1, sm: 2 },
                 backgroundColor: 'white',
                 color: 'black',
+                fontSize: { xs: '0.8rem', sm: '0.875rem' },
                 '&:hover': {
                   backgroundColor: '#e0e0e0',
                 },
@@ -310,28 +333,49 @@ const VideoPlayer: React.FC = () => {
               Subscribe
             </Button>
           </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: { xs: 0.5, sm: 1 }
+          }}>
             <Button
               startIcon={<ThumbUpIcon />}
-              sx={{ color: 'white', mr: 1 }}
+              sx={{ 
+                color: 'white',
+                fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                minWidth: 'auto'
+              }}
             >
               {video.likes}
             </Button>
             <Button
               startIcon={<ThumbDownIcon />}
-              sx={{ color: 'white', mr: 1 }}
+              sx={{ 
+                color: 'white',
+                fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                minWidth: 'auto'
+              }}
             >
               Dislike
             </Button>
             <Button
               startIcon={<ShareIcon />}
-              sx={{ color: 'white', mr: 1 }}
+              sx={{ 
+                color: 'white',
+                fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                minWidth: 'auto'
+              }}
             >
               Share
             </Button>
             <Button
               startIcon={<SaveIcon />}
-              sx={{ color: 'white' }}
+              sx={{ 
+                color: 'white',
+                fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                minWidth: 'auto'
+              }}
             >
               Save
             </Button>
@@ -340,65 +384,98 @@ const VideoPlayer: React.FC = () => {
 
         <Divider sx={{ backgroundColor: '#303030', mb: 2 }} />
 
-        <Box sx={{ backgroundColor: '#272727', p: 2, borderRadius: '12px', mb: 2 }}>
-          <Typography variant="body2" sx={{ color: 'white', mb: 1 }}>
+        <Box sx={{ 
+          backgroundColor: '#272727', 
+          p: 2, 
+          borderRadius: '12px', 
+          mb: 2,
+          '@media (max-width: 600px)': {
+            p: 1.5,
+            borderRadius: '8px',
+          }
+        }}>
+          <Typography variant="body2" sx={{ 
+            color: 'white', 
+            mb: 1,
+            fontSize: { xs: '0.8rem', sm: '0.875rem' }
+          }}>
             {video.views} views • {video.timestamp}
           </Typography>
-          <Typography variant="body1" sx={{ color: 'white', whiteSpace: 'pre-line' }}>
+          <Typography variant="body1" sx={{ 
+            color: 'white', 
+            whiteSpace: 'pre-line',
+            fontSize: { xs: '0.9rem', sm: '1rem' },
+            lineHeight: 1.5
+          }}>
             {video.description}
           </Typography>
         </Box>
 
         <Divider sx={{ backgroundColor: '#303030', mb: 2 }} />
 
-        <Typography variant="h6" sx={{ color: 'white', mb: 2 }}>
+        <Typography variant="h6" sx={{ 
+          color: 'white', 
+          mb: 2,
+          fontSize: { xs: '1rem', sm: '1.25rem' }
+        }}>
           Comments
         </Typography>
-        <Typography variant="body1" sx={{ color: '#aaa', mb: 4 }}>
+        <Typography variant="body1" sx={{ 
+          color: '#aaa', 
+          mb: 4,
+          fontSize: { xs: '0.9rem', sm: '1rem' }
+        }}>
           Comments are disabled for this video.
         </Typography>
       </Box>
 
-      <Box sx={{ flex: '1 1 30%', mt: { xs: 4, md: 0 } }}>
-        <Typography variant="h6" sx={{ color: 'white', mb: 2 }}>
+      <Box sx={{ 
+        flex: '1 1 30%', 
+        mt: { xs: 4, md: 0 },
+        '@media (max-width: 600px)': {
+          mt: 2,
+        }
+      }}>
+        <Typography variant="h6" sx={{ 
+          color: 'white', 
+          mb: 2,
+          fontSize: { xs: '1rem', sm: '1.25rem' }
+        }}>
           Related Videos
         </Typography>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           {relatedVideosList.map((video) => (
             <Box
               key={video.id}
-              component={Link}
-              to={`/video/${video.videoId}`}
               sx={{
                 display: 'flex',
-                gap: 2,
-                textDecoration: 'none',
-                p: 1,
-                borderRadius: '8px',
-                transition: 'all 0.2s ease-in-out',
+                gap: 1,
+                cursor: 'pointer',
                 '&:hover': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
                   transform: 'scale(1.02)',
+                  transition: 'transform 0.2s',
                 },
               }}
             >
               <Box sx={{ 
                 position: 'relative', 
-                width: '168px', 
-                height: '94px',
+                width: '40%', 
+                paddingTop: '22.5%',
                 flexShrink: 0,
                 borderRadius: '8px',
                 overflow: 'hidden',
-                backgroundColor: '#0f0f0f',
               }}>
-                <AISongThumbnail
-                  title={video.title}
-                  artist={video.channel}
-                  genre={video.genre}
-                  mood={video.mood}
-                  duration={video.duration}
-                  style={video.style}
-                  thumbnailStyle={video.thumbnailStyle}
+                <img
+                  src={video.thumbnail}
+                  alt={video.title}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                  }}
                 />
                 <Box
                   sx={{
@@ -411,6 +488,7 @@ const VideoPlayer: React.FC = () => {
                     borderRadius: '4px',
                     fontSize: '12px',
                     fontWeight: 500,
+                    backdropFilter: 'blur(4px)',
                   }}
                 >
                   {video.duration}
@@ -421,14 +499,14 @@ const VideoPlayer: React.FC = () => {
                   variant="subtitle1"
                   sx={{
                     color: 'white',
-                    fontWeight: 'bold',
+                    fontWeight: 500,
                     mb: 0.5,
                     display: '-webkit-box',
                     WebkitLineClamp: 2,
                     WebkitBoxOrient: 'vertical',
                     overflow: 'hidden',
-                    fontSize: '0.95rem',
-                    lineHeight: '1.3',
+                    fontSize: { xs: '0.9rem', sm: '0.95rem' },
+                    lineHeight: 1.3,
                   }}
                 >
                   {video.title}
@@ -437,7 +515,7 @@ const VideoPlayer: React.FC = () => {
                   variant="body2"
                   sx={{ 
                     color: '#aaa', 
-                    fontSize: '0.85rem',
+                    fontSize: { xs: '0.8rem', sm: '0.85rem' },
                     mb: 0.5,
                   }}
                 >
@@ -447,7 +525,7 @@ const VideoPlayer: React.FC = () => {
                   variant="caption"
                   sx={{ 
                     color: '#aaa', 
-                    fontSize: '0.85rem',
+                    fontSize: { xs: '0.8rem', sm: '0.85rem' },
                   }}
                 >
                   {video.views} • {video.timestamp}

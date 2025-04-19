@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   Drawer,
   List,
@@ -7,6 +7,10 @@ import {
   ListItemIcon,
   ListItemText,
   Divider,
+  useMediaQuery,
+  useTheme,
+  IconButton,
+  Box,
 } from '@mui/material';
 import {
   Home as HomeIcon,
@@ -17,9 +21,16 @@ import {
   ThumbUp as ThumbUpIcon,
   PlaylistPlay as PlaylistPlayIcon,
   WatchLater as WatchLaterIcon,
+  ChevronLeft as ChevronLeftIcon,
 } from '@mui/icons-material';
 
-const drawerWidth = 240;
+interface SidebarProps {
+  open: boolean;
+  onClose: () => void;
+}
+
+const drawerWidth = 72;
+const expandedDrawerWidth = 240;
 
 const mainMenuItems = [
   { text: 'Home', icon: <HomeIcon />, path: '/' },
@@ -35,52 +46,110 @@ const secondaryMenuItems = [
   { text: 'Watch Later', icon: <WatchLaterIcon />, path: '/watch-later' },
 ];
 
-const Sidebar = () => {
+const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const location = useLocation();
+
+  const renderMenuItems = (items: typeof mainMenuItems) => (
+    <List sx={{ py: 0 }}>
+      {items.map((item) => {
+        const isSelected = location.pathname === item.path;
+        return (
+          <ListItem
+            key={item.text}
+            component={Link}
+            to={item.path}
+            sx={{ 
+              cursor: 'pointer',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              padding: '8px 0',
+              minHeight: 'auto',
+              transition: 'background-color 0.2s ease-in-out',
+              '&:hover': {
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+              },
+              '&.Mui-selected': {
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                '&:hover': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                },
+              },
+            }}
+            onClick={isMobile ? onClose : undefined}
+          >
+            <ListItemIcon sx={{ 
+              color: isSelected ? 'white' : 'rgba(255, 255, 255, 0.7)',
+              minWidth: 'auto',
+              justifyContent: 'center',
+              transition: 'color 0.2s ease-in-out',
+              '&:hover': {
+                color: 'white',
+              },
+            }}>
+              {item.icon}
+            </ListItemIcon>
+            <ListItemText 
+              primary={item.text} 
+              sx={{
+                '& .MuiTypography-root': {
+                  fontSize: '0.7rem',
+                  color: isSelected ? 'white' : 'rgba(255, 255, 255, 0.7)',
+                  transition: 'color 0.2s ease-in-out',
+                  textAlign: 'center',
+                  marginTop: '4px',
+                },
+                '&:hover .MuiTypography-root': {
+                  color: 'white',
+                },
+              }}
+            />
+          </ListItem>
+        );
+      })}
+    </List>
+  );
+
   return (
     <Drawer
-      variant="permanent"
+      variant={isMobile ? "temporary" : "permanent"}
+      open={open}
+      onClose={onClose}
       sx={{
-        width: drawerWidth,
+        width: isMobile ? '100%' : drawerWidth,
         flexShrink: 0,
         '& .MuiDrawer-paper': {
-          width: drawerWidth,
+          width: isMobile ? '100%' : drawerWidth,
           boxSizing: 'border-box',
           backgroundColor: '#0f0f0f',
-          borderRight: '1px solid #303030',
+          borderRight: 'none',
           color: 'white',
+          transition: 'width 0.2s ease-in-out',
+          overflowX: 'hidden',
         },
       }}
     >
-      <div className="h-[56px]" /> {/* Spacer for navbar */}
-      <List>
-        {mainMenuItems.map((item) => (
-          <ListItem
-            key={item.text}
-            component={Link}
-            to={item.path}
-            className="hover:bg-[#272727]"
-            sx={{ cursor: 'pointer' }}
+      <Box sx={{ height: '56px' }} /> {/* Spacer for navbar */}
+      {isMobile && (
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', p: 1 }}>
+          <IconButton 
+            onClick={onClose} 
+            sx={{ 
+              color: 'rgba(255, 255, 255, 0.7)',
+              '&:hover': {
+                color: 'white',
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+              },
+            }}
           >
-            <ListItemIcon sx={{ color: 'white' }}>{item.icon}</ListItemIcon>
-            <ListItemText primary={item.text} />
-          </ListItem>
-        ))}
-      </List>
-      <Divider sx={{ backgroundColor: '#303030' }} />
-      <List>
-        {secondaryMenuItems.map((item) => (
-          <ListItem
-            key={item.text}
-            component={Link}
-            to={item.path}
-            className="hover:bg-[#272727]"
-            sx={{ cursor: 'pointer' }}
-          >
-            <ListItemIcon sx={{ color: 'white' }}>{item.icon}</ListItemIcon>
-            <ListItemText primary={item.text} />
-          </ListItem>
-        ))}
-      </List>
+            <ChevronLeftIcon />
+          </IconButton>
+        </Box>
+      )}
+      {renderMenuItems(mainMenuItems)}
+      <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.1)', my: 1 }} />
+      {renderMenuItems(secondaryMenuItems)}
     </Drawer>
   );
 };

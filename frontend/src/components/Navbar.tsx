@@ -9,6 +9,13 @@ import {
   Avatar,
   Menu,
   MenuItem,
+  useMediaQuery,
+  useTheme,
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -16,10 +23,18 @@ import {
   VideoCall as VideoCallIcon,
   Notifications as NotificationsIcon,
   AccountCircle,
+  Mic as MicIcon,
 } from '@mui/icons-material';
 
-const Navbar = () => {
+interface NavbarProps {
+  onMenuClick: () => void;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -27,6 +42,10 @@ const Navbar = () => {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const toggleSearch = () => {
+    setSearchOpen(!searchOpen);
   };
 
   return (
@@ -37,13 +56,14 @@ const Navbar = () => {
           color="inherit"
           aria-label="menu"
           sx={{ mr: 2 }}
+          onClick={onMenuClick}
         >
           <MenuIcon />
         </IconButton>
 
         <Link to="/" className="flex items-center">
           <svg
-            height="20"
+            height={isMobile ? "16" : "20"}
             viewBox="0 0 90 20"
             className="mr-2"
           >
@@ -58,26 +78,39 @@ const Navbar = () => {
               />
             </g>
           </svg>
-          <span className="text-xl font-bold">YouTube</span>
+          {!isMobile && <span className="text-xl font-bold">YouTube</span>}
         </Link>
 
-        <div className="flex-1 flex items-center justify-center mx-4">
-          <div className="flex items-center bg-[#121212] rounded-full px-4 py-2 w-full max-w-2xl">
-            <InputBase
-              placeholder="Search"
-              className="flex-1 text-white"
-              sx={{ ml: 1 }}
-            />
-            <IconButton type="submit" sx={{ p: '10px' }}>
+        {!isMobile ? (
+          <div className="flex-1 flex items-center justify-center mx-4">
+            <div className="flex items-center bg-[#121212] rounded-full px-4 py-2 w-full max-w-2xl">
+              <InputBase
+                placeholder="Search"
+                className="flex-1 text-white"
+                sx={{ ml: 1 }}
+              />
+              <IconButton type="submit" sx={{ p: '10px' }}>
+                <SearchIcon />
+              </IconButton>
+            </div>
+          </div>
+        ) : (
+          <div className="flex-1 flex justify-end">
+            <IconButton color="inherit" onClick={toggleSearch}>
               <SearchIcon />
             </IconButton>
+            <IconButton color="inherit">
+              <MicIcon />
+            </IconButton>
           </div>
-        </div>
+        )}
 
         <div className="flex items-center">
-          <IconButton color="inherit">
-            <VideoCallIcon />
-          </IconButton>
+          {!isMobile && (
+            <IconButton color="inherit">
+              <VideoCallIcon />
+            </IconButton>
+          )}
           <IconButton color="inherit">
             <Badge badgeContent={4} color="error">
               <NotificationsIcon />
@@ -91,16 +124,43 @@ const Navbar = () => {
               <AccountCircle />
             </Avatar>
           </IconButton>
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
-          >
-            <MenuItem onClick={handleClose}>Profile</MenuItem>
-            <MenuItem onClick={handleClose}>My account</MenuItem>
-            <MenuItem onClick={handleClose}>Logout</MenuItem>
-          </Menu>
         </div>
+
+        {isMobile && searchOpen && (
+          <Drawer
+            anchor="top"
+            open={searchOpen}
+            onClose={toggleSearch}
+            sx={{
+              '& .MuiDrawer-paper': {
+                backgroundColor: '#0f0f0f',
+                padding: '16px',
+              },
+            }}
+          >
+            <div className="flex items-center bg-[#121212] rounded-full px-4 py-2">
+              <InputBase
+                placeholder="Search"
+                className="flex-1 text-white"
+                sx={{ ml: 1 }}
+                autoFocus
+              />
+              <IconButton type="submit" sx={{ p: '10px' }}>
+                <SearchIcon />
+              </IconButton>
+            </div>
+          </Drawer>
+        )}
+
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
+        >
+          <MenuItem onClick={handleClose}>Profile</MenuItem>
+          <MenuItem onClick={handleClose}>My account</MenuItem>
+          <MenuItem onClick={handleClose}>Logout</MenuItem>
+        </Menu>
       </Toolbar>
     </AppBar>
   );

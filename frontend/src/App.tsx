@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { ThemeProvider, createTheme } from '@mui/material';
+import { ThemeProvider, createTheme, useMediaQuery, useTheme } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
@@ -24,14 +24,22 @@ const darkTheme = createTheme({
 });
 
 function App() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       <Router>
         <div className="flex h-screen bg-[#0f0f0f]">
-          <Navbar />
-          <Sidebar />
-          <main className="flex-1 overflow-y-auto ml-[1vh] mt-[56px]">
+          <Navbar onMenuClick={toggleSidebar} />
+          <Sidebar open={sidebarOpen} onClose={toggleSidebar} />
+          <main className={`flex-1 overflow-y-auto ${isMobile ? 'ml-0' : 'ml-[72px]'} mt-[56px] transition-all duration-200`}>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/explore" element={<Explore />} />

@@ -583,7 +583,14 @@ const Home = () => {
   }
 
   return (
-    <Container maxWidth="xl" sx={{ py: 2 }}>
+    <Container maxWidth="xl" sx={{ 
+      py: 2, 
+      px: { xs: 1, sm: 2 },
+      '@media (max-width: 600px)': {
+        py: 1,
+        px: 0.5,
+      }
+    }}>
       {/* Categories Bar */}
       <Box sx={{ 
         position: 'sticky', 
@@ -595,26 +602,38 @@ const Home = () => {
         overflowX: 'auto',
         '&::-webkit-scrollbar': {
           display: 'none'
+        },
+        '@media (max-width: 600px)': {
+          mb: 1,
         }
       }}>
-        <Box sx={{ display: 'flex', gap: 1, p: 1 }}>
-          <Chip label="All" color="primary" />
-          <Chip label="Music" />
-          <Chip label="Gaming" />
-          <Chip label="Live" />
-          <Chip label="React" />
-          <Chip label="TypeScript" />
-          <Chip label="Programming" />
-          <Chip label="Web Development" />
-          <Chip label="Computer Science" />
-          <Chip label="Recently uploaded" />
-          <Chip label="Watched" />
-          <Chip label="New to you" />
+        <Box sx={{ 
+          display: 'flex', 
+          gap: 1, 
+          p: 1,
+          '@media (max-width: 600px)': {
+            gap: 0.5,
+            p: 0.5,
+          }
+        }}>
+          {['All', 'Music', 'Gaming', 'Live', 'React', 'TypeScript', 'Programming', 'Web Development', 'Computer Science', 'Recently uploaded', 'Watched', 'New to you'].map((category) => (
+            <Chip 
+              key={category}
+              label={category} 
+              color={category === 'All' ? 'primary' : 'default'}
+              sx={{ 
+                '@media (max-width: 600px)': {
+                  fontSize: '0.8rem',
+                  height: '28px',
+                }
+              }}
+            />
+          ))}
         </Box>
       </Box>
 
       {/* Main Content */}
-      <Grid container spacing={3}>
+      <Grid container spacing={{ xs: 1, sm: 2 }}>
         {videos.map((video) => (
           <Grid 
             item 
