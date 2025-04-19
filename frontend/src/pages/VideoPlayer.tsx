@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   Box,
@@ -9,15 +9,23 @@ import {
   Card,
   CardContent,
   CircularProgress,
+  IconButton,
 } from '@mui/material';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import ShareIcon from '@mui/icons-material/Share';
 import SaveIcon from '@mui/icons-material/Save';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import PauseIcon from '@mui/icons-material/Pause';
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+import VolumeOffIcon from '@mui/icons-material/VolumeOff';
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import AISongThumbnail from '../components/AISongThumbnail';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { API_URL } from '../config';
+import ReactPlayer from 'react-player';
 
 interface Video {
   id: string;
@@ -53,7 +61,7 @@ const videoData: Video = {
   description: 'In this comprehensive tutorial, we build a YouTube clone using React, TypeScript, and Material-UI. Learn how to create a modern web application with a clean architecture and responsive design.',
   thumbnail: 'https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
   videoId: 'dQw4w9WgXcQ',
-  videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+  videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
   channel: 'Tech Channel',
   channelAvatar: 'https://i.pravatar.cc/150?img=1',
   subscribers: '1.2M subscribers',
@@ -213,6 +221,12 @@ const VideoPlayer: React.FC = () => {
   const [video, setVideo] = useState<Video>(videoData);
   const [relatedVideosList, setRelatedVideosList] = useState<Video[]>(relatedVideos);
   const [loading, setLoading] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const playerRef = useRef<ReactPlayer>(null);
 
   useEffect(() => {
     setLoading(true);
@@ -239,6 +253,46 @@ const VideoPlayer: React.FC = () => {
     }
   }, [id]);
 
+  const togglePlay = () => {
+    setIsPlaying(!isPlaying);
+  };
+
+  const toggleMute = () => {
+    setIsMuted(!isMuted);
+  };
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      playerRef.current?.getInternalPlayer()?.requestFullscreen();
+      setIsFullscreen(true);
+    } else {
+      document.exitFullscreen();
+      setIsFullscreen(false);
+    }
+  };
+
+  const handleProgress = (state: { playedSeconds: number }) => {
+    setCurrentTime(state.playedSeconds);
+  };
+
+  const handleDuration = (duration: number) => {
+    setDuration(duration);
+  };
+
+  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (playerRef.current) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const pos = (e.clientX - rect.left) / rect.width;
+      playerRef.current.seekTo(pos * duration);
+    }
+  };
+
+  const formatTime = (time: number) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = Math.floor(time % 60);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  };
+
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
@@ -259,29 +313,116 @@ const VideoPlayer: React.FC = () => {
       }
     }}>
       <Box sx={{ flex: '1 1 70%' }}>
-        <Box sx={{ 
-          position: 'relative', 
-          width: '100%', 
-          paddingTop: '56.25%',
-          borderRadius: '12px',
-          overflow: 'hidden',
-          backgroundColor: '#0f0f0f',
-          '@media (max-width: 600px)': {
-            borderRadius: '8px',
-          }
-        }}>
-          <video
-            src={video.videoUrl}
-            controls
+        <Box 
+          sx={{ 
+            position: 'relative', 
+            width: '100%', 
+            paddingTop: '56.25%',
+            borderRadius: '12px',
+            overflow: 'hidden',
+            backgroundColor: '#0f0f0f',
+            cursor: 'pointer',
+            '@media (max-width: 600px)': {
+              borderRadius: '8px',
+            }
+          }}
+        >
+          <ReactPlayer
+            ref={playerRef}
+            url={video.videoUrl}
+            width="100%"
+            height="100%"
+            playing={isPlaying}
+            muted={isMuted}
+            controls={false}
             style={{
               position: 'absolute',
               top: 0,
               left: 0,
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
+            }}
+            onProgress={handleProgress}
+            onDuration={handleDuration}
+            config={{
+              youtube: {
+                playerVars: {
+                  modestbranding: 1,
+                  rel: 0,
+                },
+              },
             }}
           />
+          
+          {/* Video Controls Overlay */}
+          <Box
+            sx={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              background: 'linear-gradient(transparent, rgba(0,0,0,0.7))',
+              padding: '16px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px',
+            }}
+          >
+            {/* Progress Bar */}
+            <Box
+              sx={{
+                width: '100%',
+                height: '4px',
+                backgroundColor: 'rgba(255,255,255,0.2)',
+                borderRadius: '2px',
+                cursor: 'pointer',
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleSeek(e);
+              }}
+            >
+              <Box
+                sx={{
+                  width: `${(currentTime / duration) * 100}%`,
+                  height: '100%',
+                  backgroundColor: '#ff0000',
+                  borderRadius: '2px',
+                }}
+              />
+            </Box>
+
+            {/* Controls */}
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <IconButton onClick={(e) => {
+                  e.stopPropagation();
+                  togglePlay();
+                }}>
+                  {isPlaying ? <PauseIcon sx={{ color: 'white' }} /> : <PlayArrowIcon sx={{ color: 'white' }} />}
+                </IconButton>
+                <IconButton onClick={(e) => {
+                  e.stopPropagation();
+                  toggleMute();
+                }}>
+                  {isMuted ? <VolumeOffIcon sx={{ color: 'white' }} /> : <VolumeUpIcon sx={{ color: 'white' }} />}
+                </IconButton>
+                <Typography variant="body2" sx={{ color: 'white' }}>
+                  {formatTime(currentTime)} / {formatTime(duration)}
+                </Typography>
+              </Box>
+              <IconButton onClick={(e) => {
+                e.stopPropagation();
+                toggleFullscreen();
+              }}>
+                {isFullscreen ? <FullscreenExitIcon sx={{ color: 'white' }} /> : <FullscreenIcon sx={{ color: 'white' }} />}
+              </IconButton>
+            </Box>
+          </Box>
         </Box>
 
         <Box sx={{ 
