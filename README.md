@@ -57,20 +57,34 @@ A full-stack YouTube clone application built using **React**, **TypeScript**, **
 ---
 
 ## 🗂 Project Structure
+```C#
 youtube/
-├── backend/ # Express backend API
-│ ├── index.js # Entry point for the server
-│ └── routes/ # API routes
+├── backend/                # Backend source code
+│   ├── controllers/        # Route logic (optional)
+│   ├── routes/             # Express routes
+│   ├── models/             # Data models (if using DB)
+│   ├── middleware/         # Auth, logging, etc.
+│   ├── utils/              # Utility functions
+│   ├── config/             # Environment and config
+│   ├── index.js            # Entry point
+│   └── package.json        # Backend dependencies
 │
-└── frontend/ # React + TypeScript frontend
-├── public/
-├── src/
-│ ├── components/ # Reusable components
-│ ├── pages/ # Page views
-│ ├── services/ # API calls
-│ ├── App.tsx
-│ └── index.tsx
-
+├── frontend/               # Frontend source code
+│   ├── public/             # Static assets
+│   └── src/
+│       ├── assets/         # Images, videos, etc.
+│       ├── components/     # Shared UI components
+│       ├── pages/          # Individual screens/views
+│       ├── services/       # API calls
+│       ├── utils/          # Frontend utilities
+│       ├── App.tsx         # App root
+│       └── index.tsx       # React DOM entry
+│   └── package.json        # Frontend dependencies
+│
+├── .gitignore
+├── README.md
+└── LICENSE
+```
 
 ---
 
