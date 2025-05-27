@@ -133,7 +133,7 @@ npm start
 **Backend will run at: http://localhost:5000 (or as configured)**
 
 ## 🖼 Screenshots
-(https://res.cloudinary.com/dn0bmsj49/image/upload/v1746998202/o56hpqlsuischsvpepaf.png)
+![Game Screenshot](https://res.cloudinary.com/dn0bmsj49/image/upload/v1746998202/o56hpqlsuischsvpepaf.png)
 
 Home Page	Video Player
 
